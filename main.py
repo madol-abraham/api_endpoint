@@ -1,7 +1,8 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Response
+from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel
 from typing import List, Optional
-from datetime import date  # <-- Import date
+from datetime import date
 import pymysql
 import logging
 
@@ -39,18 +40,23 @@ class Movie(BaseModel):
     title: str
     movie_type: str
     netflix_exclusive: str
-    release_date: date  # <-- Changed to date
+    release_date: date
 
 class MovieUpdate(BaseModel):
     title: Optional[str] = None
     movie_type: Optional[str] = None
     netflix_exclusive: Optional[str] = None
-    release_date: Optional[date] = None  # <-- Changed to date
+    release_date: Optional[date] = None
 
 # Root endpoint
 @app.get("/")
 async def root():
     return {"message": "Welcome to Netflix!"}
+
+# Favicon endpoint
+@app.get("/favicon.ico", include_in_schema=False)
+async def get_favicon():
+    return Response(status_code=204)
 
 # Create (POST) endpoint
 @app.post("/movies/", response_model=Movie)
@@ -136,4 +142,4 @@ async def delete_movie(movie_id: int):
 # Run the application
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    uvicorn.run(app, host="0.0.0.0", port=10000)
